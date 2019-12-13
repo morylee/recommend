@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.yzkx.secin.mapper.recommend.FavoriteCategoryMapper" >
+
+	<resultMap id="BaseResultMap" type="org.yzkx.secin.model.recommend.FavoriteCategory" >
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="category_id" property="categoryId" jdbcType="INTEGER" />
+		<result column="_value" property="value" jdbcType="DOUBLE" />
+		<result column="is_delete" property="isDelete" jdbcType="BOOLEAN" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+		<result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<sql id="BaseColumnList" >
+		id, user_id, category_id, _value, is_delete, created_at, updated_at
+	</sql>
+	
+	<insert id="addIgnoreIndex" parameterType="org.yzkx.secin.model.recommend.FavoriteCategory" useGeneratedKeys="true" keyProperty="id">
+		insert into favorite_category (user_id, category_id, _value, is_delete, created_at, updated_at)
+		values(#{userId}, #{categoryId}, #{value}, #{isDelete}, sysdate(), sysdate())
+		on duplicate key update _value = IF(_value > 0, _value, 0) + IFNULL(values(_value), 0), updated_at = sysdate()
+	</insert>
+	
+	<insert id="updateBatchIgnoreIndex" parameterType="java.util.List">
+		<if test="list != null and list.size() > 0">
+			insert into favorite_category(id, user_id, category_id, _value, is_delete, created_at, updated_at) values
+			<foreach item="item" collection="list" separator="," open="(" close=")">
+				#{item.id}, #{item.userId}, #{item.categoryId}, #{item.value}, #{item.isDelete}, sysdate(), sysdate()
+			</foreach>
+			on duplicate key update _value = IF(_value > 0, _value, 0) + IFNULL(values(_value), 0), updated_at = sysdate()
+		</if>
+	</insert>
+	
+	<select id="select" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select * from favorite_category
+		<where>
+			<if test="userId != null">
+				user_id = #{userId}
+			</if>
+			<if test="valueFrom != null">
+				and _value &gt;= #{valueFrom}
+			</if>
+			<if test="isDelete != null">
+				and is_delete = #{isDelete}
+			</if>
+			<if test="updateFrom != null">
+				and updated_at &gt;= #{updatedFrom}
+			</if>
+			<if test="updateTo != null">
+				and updated_at &lt; #{updateTo}
+			</if>
+		</where>
+	</select>
+
+</mapper>

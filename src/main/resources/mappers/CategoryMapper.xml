@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.yzkx.secin.mapper.core.CategoryMapper" >
+
+	<resultMap id="BaseResultMap" type="org.yzkx.secin.model.core.Category" >
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="parent_id" property="parentId" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="select" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select id, parent_id, name from category
+		<where>
+			<if test="parentId != null">
+				parent_id = #{parentId}
+			</if>
+			<if test="type != null">
+				and type = #{type}
+			</if>
+			<if test="parentIds != null and parentIds.size() > 0">
+				and parent_id in
+				<foreach collection="parentIds" open="(" close=")" separator="," item="item">
+					#{item, jdbcType=INTEGER}
+				</foreach>
+			</if>
+		</where>
+	</select>
+
+</mapper>

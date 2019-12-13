@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.yzkx.secin.mapper.core.ArticleMapper" >
+
+	<resultMap id="BaseResultMap" type="org.yzkx.secin.model.core.Article" >
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="category_id" property="categoryId" jdbcType="INTEGER" />
+		<result column="category_2nd_id" property="category2ndId" jdbcType="INTEGER" />
+		<result column="article_title" property="articleTitle" jdbcType="VARCHAR" />
+		<!-- <result column="popular_value" property="popularValue" jdbcType="DOUBLE" /> -->
+	</resultMap>
+	
+	<sql id="BaseColumnList" >
+		id, category_id, category_2nd_id, article_title
+	</sql>
+	
+	<select id="findById" resultMap="BaseResultMap">
+		select id, category_id, category_2nd_id, article_title from article where id = #{id}
+	</select>
+	
+	<select id="selectIds" parameterType="java.util.Map" resultType="java.lang.Long">
+		select a.id
+		from article a
+		<if test="tagId != null">
+			join article_tag at on at.article_id = a.id
+		</if>
+		<where>
+			<if test="category2ndId != null">
+				category_2nd_id = #{category2ndId}
+			</if>
+			<if test="tagId != null">
+				and at.tag_id = #{tagId}
+			</if>
+		</where>
+	</select>
+
+</mapper>

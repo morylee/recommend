@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.yzkx.secin.mapper.core.ArticleTagMapper" >
+
+	<resultMap id="BaseResultMap" type="org.yzkx.secin.model.core.ArticleTag" >
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="article_id" property="articleId" jdbcType="INTEGER" />
+		<result column="tag_id" property="tagId" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<sql id="BaseColumnList" >
+		id, article_id, tag_id
+	</sql>
+	
+	<select id="selectIds" parameterType="java.util.Map" resultType="java.lang.Long">
+		select at.id
+		from article_tag at
+		<where>
+			<if test="articleId != null">
+				at.article_id = #{articleId}
+			</if>
+		</where>
+	</select>
+
+</mapper>

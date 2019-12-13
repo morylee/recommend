@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.yzkx.secin.mapper.recommend.UserReadMapper" >
+
+	<resultMap id="BaseResultMap" type="org.yzkx.secin.model.recommend.UserRead" >
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="article_id" property="articleId" jdbcType="INTEGER" />
+		<result column="view_times" property="viewTimes" jdbcType="INTEGER" />
+		<result column="read_times" property="readTimes" jdbcType="INTEGER" />
+		<result column="reading_at" property="readingAt" jdbcType="TIMESTAMP" />
+		<result column="read_start_at" property="readStartAt" jdbcType="TIMESTAMP" />
+		<result column="read_end_at" property="readEndAt" jdbcType="TIMESTAMP" />
+		<result column="read_total_time" property="readTotalTime" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<sql id="BaseColumnList" >
+		id, user_id, article_id, view_times, read_times, reading_at, read_start_at, read_end_at, read_total_time
+	</sql>
+	
+	<insert id="add" parameterType="org.yzkx.secin.model.recommend.UserRead" useGeneratedKeys="true" keyProperty="id">
+		insert into user_read (
+			user_id, article_id, view_times, read_times, reading_at, read_start_at, read_end_at, read_total_time
+		) values (
+			#{userId}, #{articleId}, #{viewTimes}, #{readTimes}, #{readingAt}, #{readStartAt}, #{readEndAt}, #{readTotalTime}
+		)
+	</insert>
+	
+	<update id="update" parameterType="org.yzkx.secin.model.recommend.UserRead">
+		update
+			user_read
+		set
+			view_times = #{viewTimes},
+			read_times = #{readTimes},
+			reading_at = #{readingAt},
+			read_start_at = #{readStartAt},
+			read_end_at = #{readEndAt},
+			read_total_time = #{readTotalTime}
+		where
+			user_id = #{userId}
+			and article_id = #{articleId}
+	</update>
+	
+	<select id="find" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+			<include refid="BaseColumnList" />
+		from
+			user_read
+		where
+			user_id = #{userId}
+			and article_id = #{articleId}
+	</select>
+
+</mapper>
