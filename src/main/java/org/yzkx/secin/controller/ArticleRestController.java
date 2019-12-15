@@ -16,6 +16,7 @@ import org.yzkx.secin.core.Constants;
 import org.yzkx.secin.core.exception.IllegalParameterException;
 import org.yzkx.secin.core.quartz.JobInfo;
 import org.yzkx.secin.core.quartz.JobManager;
+import org.yzkx.secin.core.util.AssertUtil;
 import org.yzkx.secin.core.util.DateUtil;
 import org.yzkx.secin.core.util.TypeParseUtil;
 import org.yzkx.secin.model.recommend.ClientAction;
@@ -33,19 +34,14 @@ public class ArticleRestController extends BaseRestController {
 		Long userId, articleId;
 		try {
 			action = TypeParseUtil.convertToInteger(params.get("action"));
-			if (action == null || !ClientAction.articleActionValue.contains(action)) {
-				throw new IllegalParameterException("param：action illegal");
-			}
+			AssertUtil.isNull(action, "action");
+			AssertUtil.contains(action, ClientAction.articleActionValue, "action");
 			
 			userId = TypeParseUtil.convertToLong(params.get("userId"));
-			if (userId == null) {
-				throw new IllegalParameterException("param：userId illegal");
-			}
+			AssertUtil.isNull(userId, "userId");
 			
 			articleId = TypeParseUtil.convertToLong(params.get("articleId"));
-			if (articleId == null) {
-				throw new IllegalParameterException("param：articleId illegal");
-			}
+			AssertUtil.isNull(articleId, "articleId");
 		} catch (Exception e) {
 			throw new IllegalParameterException("params error");
 		}

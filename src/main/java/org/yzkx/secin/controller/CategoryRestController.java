@@ -21,6 +21,7 @@ import org.yzkx.secin.core.Constants;
 import org.yzkx.secin.core.exception.IllegalParameterException;
 import org.yzkx.secin.core.quartz.JobInfo;
 import org.yzkx.secin.core.quartz.JobManager;
+import org.yzkx.secin.core.util.AssertUtil;
 import org.yzkx.secin.core.util.DateUtil;
 import org.yzkx.secin.core.util.TypeParseUtil;
 
@@ -37,9 +38,7 @@ public class CategoryRestController extends BaseRestController {
 		List<Long> categoryIds;
 		try {
 			userId = TypeParseUtil.convertToLong(params.get("userId"));
-			if (userId == null) {
-				throw new IllegalParameterException("param：userId illegal");
-			}
+			AssertUtil.isNull(userId, "userId");
 			
 			JSONObject json = new JSONObject(params);
 			categoryIds = new ArrayList<>();
@@ -49,9 +48,7 @@ public class CategoryRestController extends BaseRestController {
 					categoryIds.add(TypeParseUtil.convertToLong(array.get(i)));
 				}
 			}
-			if (categoryIds.size() == 0) {
-				throw new IllegalParameterException("param：categoryIds illegal");
-			}
+			AssertUtil.length(categoryIds, 1, null, "categoryIds");
 		} catch (JSONException e) {
 			throw new IllegalParameterException("params error");
 		}

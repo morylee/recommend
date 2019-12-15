@@ -6,8 +6,8 @@ import java.util.Date;
 @SuppressWarnings("serial")
 public class UserRead implements Serializable {
 
-	public static final Integer RECOMMEND_INTERVAL_TIMES = 10;
-	public static final Integer SKILLED_INTERVAL_TIMES = 10;
+	public static final Integer REPEAT_READ_INTERVAL = 10;
+	public static final Integer MAX_EFFECTIVE_READ = 101;
 	
 	private Long id;
 	private Long userId;

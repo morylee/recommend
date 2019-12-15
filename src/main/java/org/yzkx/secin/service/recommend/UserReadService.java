@@ -35,9 +35,10 @@ public class UserReadService {
 			this.add(userRead);
 			return 1.0;
 		} else {
-			userRead.setViewTimes(userRead.getViewTimes() + 1);
+			Integer viewTimes = userRead.getViewTimes() + 1;
+			userRead.setViewTimes(viewTimes);
 			this.update(userRead);
-			return 1.0 / UserRead.RECOMMEND_INTERVAL_TIMES;
+			return viewTimes > UserRead.MAX_EFFECTIVE_READ ? 0.0 : 1.0 / UserRead.REPEAT_READ_INTERVAL;
 		}
 	}
 	
@@ -50,19 +51,26 @@ public class UserReadService {
 		this.update(userRead);
 	}
 	
-	public void endRead(Long userId, Long articleId) {
+	public Double endRead(Long userId, Long articleId) {
+		Double ratio = 0d;
 		UserRead userRead = this.find(userId, articleId);
-		if (userRead == null) return;
+		if (userRead != null && userRead.getReadingAt() != null) {
+			Long readTotalTime = userRead.getReadTotalTime();
+			Date startAt = userRead.getReadingAt();
+			Date endAt = new Date();
+			
+			if (userRead.getReadTimes() <= UserRead.MAX_EFFECTIVE_READ)
+				ratio = readTotalTime == 0 ? 1.0 : 1.0 / UserRead.REPEAT_READ_INTERVAL;
+			
+			userRead.setReadingAt(null);
+			userRead.setReadStartAt(startAt);
+			userRead.setReadEndAt(endAt);
+			Long readTime = endAt.getTime() - startAt.getTime();
+			userRead.setReadTotalTime(readTotalTime + readTime);
+			this.update(userRead);
+		}
 		
-		Date startAt = userRead.getReadingAt();
-		if (startAt == null) return;
-		Date endAt = new Date();
-		userRead.setReadingAt(null);
-		userRead.setReadStartAt(startAt);
-		userRead.setReadEndAt(endAt);
-		Long readTime = endAt.getTime() - startAt.getTime();
-		userRead.setReadTotalTime(userRead.getReadTotalTime() + readTime);
-		this.update(userRead);
+		return ratio;
 	}
 	
 	public UserRead find(Map<String, Object> params) {

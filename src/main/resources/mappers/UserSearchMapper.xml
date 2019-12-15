@@ -14,4 +14,55 @@
 		id, user_id, keyword, created_at, updated_at
 	</sql>
 	
+	<insert id="add" parameterType="org.yzkx.secin.model.recommend.UserSearch" useGeneratedKeys="true" keyProperty="id">
+		insert into user_search (
+			user_id, keyword, created_at, updated_at
+		) values (
+			#{userId}, #{keyword}, sysdate(), sysdate()
+		)
+	</insert>
+	
+	<update id="update" parameterType="org.yzkx.secin.model.recommend.UserSearch">
+		update
+			user_search
+		set
+			updated_at = sysdate()
+		where
+			user_id = #{userId}
+			and keyword = #{keyword}
+	</update>
+	
+	<select id="find" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+			<include refid="BaseColumnList" />
+		from
+			user_search
+		where
+			user_id = #{userId}
+			and keyword = #{keyword}
+		limit 1
+	</select>
+	
+	<select id="selectHistory" resultType="java.lang.String" parameterType="java.util.Map">
+		select
+			keyword
+		from
+			user_search
+		where
+			user_id = #{userId}
+		order by updated_at desc
+		<if test="from != null and pageSize != null">
+			limit #{from}, #{pageSize}
+		</if>
+	</select>
+	
+	<select id="countHistory" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select
+			count(*)
+		from
+			user_search
+		where
+			user_id = #{userId}
+	</select>
+
 </mapper>
